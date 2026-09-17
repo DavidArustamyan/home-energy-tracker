@@ -17,7 +17,7 @@ public class DeviceService {
 
     public DeviceDto getDeviceById(Long id) {
         Device device = deviceRepository.findById(id)
-                .orElseThrow(() -> new DeviceNotFoundException("device was not found"));
+                .orElseThrow(() -> new DeviceNotFoundException("device not found with id: " + id));
         return mapToDto(device);
     }
 
