@@ -2,6 +2,7 @@ package com.kafka_sc.user_service.service;
 
 import com.kafka_sc.user_service.dto.UserDto;
 import com.kafka_sc.user_service.entity.User;
+import com.kafka_sc.user_service.exception.UserNotFoundException;
 import com.kafka_sc.user_service.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class UserService {
 
     public void updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
@@ -52,7 +53,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+                .orElseThrow(() -> new UserNotFoundException("user not found"));
         userRepository.delete(user);
     }
 
