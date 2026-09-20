@@ -16,5 +16,14 @@ public class IngestionService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
+    public void ingestEnergyUsage(EnergyUsageDto input) {
+        EnergyUsageEvent event = EnergyUsageEvent.builder()
+                .deviceId(input.deviceId())
+                .energyConsumed(input.energyConsumed())
+                .timestamp(input.timestamp())
+                .build();
 
+        kafkaTemplate.send("energy-usage", event);
+        log.info("Ingested Energy Usage Event: {}", event);
+    }
 }
