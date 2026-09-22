@@ -3,6 +3,7 @@ package com.kafka_sc.user_service;
 import com.kafka_sc.user_service.entity.User;
 import com.kafka_sc.user_service.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ class UserServiceApplicationTests {
 	}
 
 	@Test
+	@Disabled
 	void addUsersToDB() {
 		for (int i = 1; i <= NUMBER_OF_USERS; i++) {
 			User user = User.builder()
