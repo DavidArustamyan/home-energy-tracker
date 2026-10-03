@@ -1,6 +1,8 @@
 package com.kafka_sc.kafka.event;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class AlertingEvent {
     private Long userId;
     private String message;
-    private String email;
     private double threshold;
     private double energyConsumed;
+    private String email;
 }
