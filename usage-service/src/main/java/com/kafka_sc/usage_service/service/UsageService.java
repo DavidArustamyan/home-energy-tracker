@@ -207,7 +207,7 @@ public class UsageService {
 
         final String deviceFilter = deviceIdStrings.stream()
                 .map(idStr -> String.format("r[\"deviceId\"] == \"%s\"", idStr))
-                .collect(Collectors.joining(" or"));
+                .collect(Collectors.joining(" or "));
 
         String fluxQuery = String.format("""
         from(bucket: "%s")

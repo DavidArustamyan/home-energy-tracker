@@ -42,7 +42,7 @@ public class DeviceController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<DeviceDto>> getAllDevicesByUserId(
             @PathVariable Long userId
     ) {
