@@ -1,9 +1,9 @@
-package com.kafka_sc.injestion_service.controller;
+package com.kafka_sc.ingestion_service.controller;
 
-import com.kafka_sc.injestion_service.dto.EnergyUsageDto;
+import com.kafka_sc.ingestion_service.dto.EnergyUsageDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import com.kafka_sc.injestion_service.service.IngestionService;
+import com.kafka_sc.ingestion_service.service.IngestionService;
 @RestController
 @RequestMapping("/api/v1/ingestion")
 public class IngestionController {

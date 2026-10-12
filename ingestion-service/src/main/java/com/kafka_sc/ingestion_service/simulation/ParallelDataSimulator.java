@@ -1,6 +1,6 @@
-package com.kafka_sc.injestion_service.simulation;
+package com.kafka_sc.ingestion_service.simulation;
 
-import com.kafka_sc.injestion_service.dto.EnergyUsageDto;
+import com.kafka_sc.ingestion_service.dto.EnergyUsageDto;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
