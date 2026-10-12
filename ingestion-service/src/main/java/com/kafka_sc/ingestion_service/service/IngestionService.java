@@ -1,6 +1,6 @@
-package com.kafka_sc.injestion_service.service;
+package com.kafka_sc.ingestion_service.service;
 
-import com.kafka_sc.injestion_service.dto.EnergyUsageDto;
+import com.kafka_sc.ingestion_service.dto.EnergyUsageDto;
 import com.kafka_sc.kafka.event.EnergyUsageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

@@ -1,4 +1,4 @@
-package com.kafka_sc.injestion_service.dto;
+package com.kafka_sc.ingestion_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

@@ -1,10 +1,10 @@
-package com.kafka_sc.injestion_service;
+package com.kafka_sc.ingestion_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class InjestionServiceApplicationTests {
+class IngestionServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
