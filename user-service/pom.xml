@@ -11,8 +11,8 @@
 	<groupId>com.kafka-sc</groupId>
 	<artifactId>user-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name> user-service </name>
+	<description>users and alert preferences</description>
 	<url/>
 	<licenses>
 		<license/>

@@ -11,8 +11,8 @@
 	<groupId>com.kafka-sc</groupId>
 	<artifactId>ingestion-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name> ingestion-service </name>
+	<description>publishes energy readings to kafka</description>
 	<url/>
 	<licenses>
 		<license/>
