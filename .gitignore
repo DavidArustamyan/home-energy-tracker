@@ -76,3 +76,17 @@ docker-compose.override.yml
 *.temp
 *.swp
 *.swo
+
+# =========================
+# Docker data
+# =========================
+
+volume-data/
+docker/kafka_data
+influxdb_data
+
+# =========================
+# Misc
+# =========================
+HELP.md
+logs/

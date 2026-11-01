@@ -11,8 +11,8 @@
 	<groupId>com.kafka-sc</groupId>
 	<artifactId>usage-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name> usage-service </name>
+	<description>consumes and stores usage events, raises threshold alerts</description>
 	<url/>
 	<licenses>
 		<license/>

@@ -30,8 +30,8 @@ public class OpenApiConfig {
 
     private static Contact getContact() {
         Contact contact = new Contact();
-        contact.setUrl("https://kafka-sc.com");
-        contact.setEmail("kafka-sc@Gmail.com");
+        contact.setName("Mr Bro");
+        contact.setUrl("https://github.com/DavidArustamyan");
         return contact;
     }
 }

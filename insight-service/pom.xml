@@ -11,8 +11,8 @@
 	<groupId>com.kafka-sc</groupId>
 	<artifactId>insight-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name> insight-service </name>
+	<description>AI-generated insights about energy savings</description>
 	<url/>
 	<licenses>
 		<license/>

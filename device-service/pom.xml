@@ -11,8 +11,8 @@
 	<groupId>com.kafka_sc</groupId>
 	<artifactId>device-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name> device-service </name>
+	<description>device registry</description>
 	<url/>
 	<licenses>
 		<license/>

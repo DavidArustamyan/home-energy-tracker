@@ -11,8 +11,8 @@
 	<groupId>com.kafka-sc</groupId>
 	<artifactId>alert-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name> alert-service </name>
+	<description>takes alert events and sends email notifications</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -132,11 +132,6 @@
 						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<source>21</source>
-					<target>21</target>
-					<compilerArgs>--enable-preview</compilerArgs>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

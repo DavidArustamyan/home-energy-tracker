@@ -11,8 +11,8 @@
 	<groupId>com.kafka-sc</groupId>
 	<artifactId>api-gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name> api-gateway </name>
+	<description>single entry point</description>
 	<url/>
 	<licenses>
 		<license/>
