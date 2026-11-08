@@ -10,10 +10,7 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -48,6 +45,9 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
+        assertThat(response.getHeaders().getLocation()).isNotNull();
+        assertThat(response.getHeaders().getLocation().getPath())
+                .isEqualTo("/api/v1/user/" + response.getBody().getId());
         assertThat(response.getBody().getId()).isNotNull();
         assertThat(response.getBody().getName()).isEqualTo("Mister");
         assertThat(response.getBody().getSurname()).isEqualTo("Boss");
@@ -115,14 +115,16 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
                 .energyAlertingThreshold(750.0)
                 .build();
 
-        ResponseEntity<String> updateResponse = restTemplate.exchange(
+        ResponseEntity<UserDto> updateResponse = restTemplate.exchange(
                 "/api/v1/user/" + id,
                 HttpMethod.PUT,
                 new HttpEntity<>(updateRequest),
-                String.class);
+                UserDto.class);
 
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(updateResponse.getBody()).isEqualTo("User updated successfully");
+        assertThat(updateResponse.getBody()).isNotNull();
+        assertThat(updateResponse.getBody().getName()).isEqualTo("Alan Mathison");
+        assertThat(updateResponse.getBody().getAddress()).isEqualTo("12 Wilmslow Rd");
 
         ResponseEntity<UserDto> loaded =
                 restTemplate.getForEntity("/api/v1/user/" + id, UserDto.class);
@@ -159,9 +161,12 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
 
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        ResponseEntity<UserDto> afterDelete =
-                restTemplate.getForEntity("/api/v1/user/" + id, UserDto.class);
+        ResponseEntity<ProblemDetail> afterDelete =
+                restTemplate.getForEntity("/api/v1/user/" + id, ProblemDetail.class);
         assertThat(afterDelete.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(afterDelete.getBody()).isNotNull();
+        assertThat(afterDelete.getBody().getTitle()).isEqualTo("User not found");
+        assertThat(afterDelete.getBody().getDetail()).isEqualTo("User with id " + id + " not found");
     }
 
 }
