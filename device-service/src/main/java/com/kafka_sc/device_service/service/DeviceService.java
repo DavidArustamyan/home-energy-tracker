@@ -19,7 +19,7 @@ public class DeviceService {
 
     public DeviceDto getDeviceById(Long id) {
         Device device = deviceRepository.findById(id)
-                .orElseThrow(() -> new DeviceNotFoundException("device not found with id: " + id));
+                .orElseThrow(() -> new DeviceNotFoundException(id));
         return mapToDto(device);
     }
 
@@ -36,7 +36,7 @@ public class DeviceService {
 
     public DeviceDto updateDevice(Long id, DeviceDto input) {
         Device existing = deviceRepository.findById(id)
-                .orElseThrow(()-> new DeviceNotFoundException("Device not found with id: " + id));
+                .orElseThrow(()-> new DeviceNotFoundException(id));
         existing.setName(input.getName());
         existing.setType(input.getType());
         existing.setLocation(input.getLocation());
@@ -48,7 +48,7 @@ public class DeviceService {
 
     public void deleteDevice(Long id) {
         if (!deviceRepository.existsById(id)) {
-            throw new DeviceNotFoundException("Device not found with id: " + id);
+            throw new DeviceNotFoundException(id);
         }
         deviceRepository.deleteById(id);
     }
