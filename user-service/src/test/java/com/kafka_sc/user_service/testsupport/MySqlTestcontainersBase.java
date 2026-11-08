@@ -8,7 +8,7 @@ public abstract class MySqlTestcontainersBase {
 
     @ServiceConnection
     @Container
-    static MySQLContainer mysql = new MySQLContainer("mysql:8.4")
+    static MySQLContainer mysql = new MySQLContainer("mysql:26.7.0")
             .withDatabaseName("home_energy_tracker")
             .withUsername("root")
             .withPassword("password");
