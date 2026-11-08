@@ -39,7 +39,7 @@ public class UserService {
 
     public void updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
 
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
@@ -53,7 +53,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("user not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
         userRepository.delete(user);
     }
 
