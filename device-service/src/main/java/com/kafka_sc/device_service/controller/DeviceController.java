@@ -4,7 +4,9 @@ import com.kafka_sc.device_service.dto.DeviceDto;
 import com.kafka_sc.device_service.service.DeviceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,15 +27,18 @@ public class DeviceController {
 
     @PostMapping
     public ResponseEntity<DeviceDto> createDevice(@RequestBody DeviceDto deviceDto) {
-        DeviceDto createdDevice = deviceService.createDevice(deviceDto);
-        return ResponseEntity.ok(createdDevice);
+        DeviceDto created = deviceService.createDevice(deviceDto);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<DeviceDto> updateDevice(@PathVariable Long id,
                                                   @RequestBody DeviceDto deviceDto) {
-        DeviceDto updatedDevice = deviceService.updateDevice(id, deviceDto);
-        return ResponseEntity.ok(updatedDevice);
+        return ResponseEntity.ok(deviceService.updateDevice(id, deviceDto));
     }
 
     @DeleteMapping("/{id}")
