@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:26.7.0
     container_name: home_energy_tracker_mysql
     restart: always
     environment:
@@ -14,7 +14,7 @@ services:
 
   kafka:
     container_name: kafka
-    image: apache/kafka:latest
+    image: apache/kafka:4.3.1
     ports:
       - "9092:9092" # Internal (docker network) listener
       - "9094:9094" # External (host machine) listener
@@ -190,5 +190,4 @@ services:
 
 volumes:
   db-data:
-  kafka-data:
   grafana-data:
