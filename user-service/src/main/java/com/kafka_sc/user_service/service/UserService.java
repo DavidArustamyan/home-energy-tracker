@@ -2,10 +2,12 @@ package com.kafka_sc.user_service.service;
 
 import com.kafka_sc.user_service.dto.UserDto;
 import com.kafka_sc.user_service.entity.User;
+import com.kafka_sc.user_service.exception.EmailAlreadyExistsException;
 import com.kafka_sc.user_service.exception.UserNotFoundException;
 import com.kafka_sc.user_service.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -18,6 +20,9 @@ public class UserService {
     }
 
     public UserDto createUser(UserDto input) {
+        if (userRepository.existsByEmail(input.getEmail())) {
+            throw new EmailAlreadyExistsException(input.getEmail());
+        }
         final User createdUser = User.builder().name(input.getName()).surname(input.getSurname()).email(input.getEmail()).address(input.getAddress()).alerting(input.isAlerting()).energyAlertingThreshold(input.getEnergyAlertingThreshold()).build();
 
         User saved = userRepository.save(createdUser);
@@ -28,8 +33,13 @@ public class UserService {
         return userRepository.findById(id).map(this::toDto).orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    @Transactional
     public UserDto updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        if (userRepository.existsByEmailAndIdNot(userDto.getEmail(), id)) {
+            throw new EmailAlreadyExistsException(userDto.getEmail());
+        }
 
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
@@ -41,6 +51,7 @@ public class UserService {
         return toDto(userRepository.save(user));
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         userRepository.delete(user);

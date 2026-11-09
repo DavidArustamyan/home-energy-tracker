@@ -139,6 +139,22 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
     }
 
     @Test
+    void updateUser_withEmailOfAnotherUser_returns409() {
+        UserDto first = UserDto.builder().name("Grace").email("grace@example.com").build();
+        UserDto second = UserDto.builder().name("Mike").email("mike@example.com").build();
+
+        restTemplate.postForEntity("/api/v1/user", first, UserDto.class);
+        Long secondId = restTemplate.postForEntity("/api/v1/user", second, UserDto.class).getBody().getId();
+
+        UserDto update = UserDto.builder().name("Mike").email("grace@example.com").build();
+        ResponseEntity<ProblemDetail> response = restTemplate.exchange(
+                "/api/v1/user/" + secondId, HttpMethod.PUT, new HttpEntity<>(update), ProblemDetail.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getTitle()).isEqualTo("Email already in use");
+    }
+
+    @Test
     void deleteUser_viaRestApi_removesUser() {
         UserDto createRequest = UserDto.builder()
                 .name("Edsger")
@@ -189,6 +205,26 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
         @SuppressWarnings("unchecked")
         Map<String, String> errors = (Map<String, String>) response.getBody().getProperties().get("errors");
         assertThat(errors).containsOnlyKeys("name", "email", "energyAlertingThreshold");
+    }
+
+    @Test
+    void createUser_withDuplicatedEmail_returns409() {
+        UserDto request = UserDto.builder()
+                .name("Ada")
+                .surname("Lovelace")
+                .email("ada.duplicate@example.com")
+                .energyAlertingThreshold(100.0)
+                .build();
+
+        ResponseEntity<UserDto> first =
+                restTemplate.postForEntity("/api/v1/user", request, UserDto.class);
+        assertThat(first.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        ResponseEntity<ProblemDetail> second =
+                restTemplate.postForEntity("/api/v1/user", request, ProblemDetail.class);
+        assertThat(second.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(second.getBody()).isNotNull();
+        assertThat(second.getBody().getTitle()).isEqualTo("Email already in use");
     }
 
 }
