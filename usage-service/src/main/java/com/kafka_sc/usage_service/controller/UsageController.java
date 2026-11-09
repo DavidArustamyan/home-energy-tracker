@@ -2,6 +2,8 @@ package com.kafka_sc.usage_service.controller;
 
 import com.kafka_sc.usage_service.dto.UsageDto;
 import com.kafka_sc.usage_service.service.UsageService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +19,7 @@ public class UsageController {
     @GetMapping("/{userId}")
     public ResponseEntity<UsageDto> getUserDeviceUsage(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "3") int days) {
+            @RequestParam(defaultValue = "3") @Min(1) @Max(30) int days) {
         final UsageDto usage = usageService.getXDaysUsageForUser(userId, days);
         return ResponseEntity.ok(usage);
     }
