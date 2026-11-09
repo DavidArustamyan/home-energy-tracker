@@ -14,6 +14,8 @@ import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -167,6 +169,26 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
         assertThat(afterDelete.getBody()).isNotNull();
         assertThat(afterDelete.getBody().getTitle()).isEqualTo("User not found");
         assertThat(afterDelete.getBody().getDetail()).isEqualTo("User with id " + id + " not found");
+    }
+
+    @Test
+    void createUser_withInvalidData_returns400withFieldErrors() {
+        UserDto createRequest = UserDto.builder()
+                .name("")
+                .email("not-an-email")
+                .energyAlertingThreshold(-5)
+                .build();
+
+        ResponseEntity<ProblemDetail> response = restTemplate.postForEntity("/api/v1/user", createRequest, ProblemDetail.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getTitle()).isEqualTo("Validation failed");
+        assertThat(response.getBody().getProperties()).containsKey("errors");
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> errors = (Map<String, String>) response.getBody().getProperties().get("errors");
+        assertThat(errors).containsOnlyKeys("name", "email", "energyAlertingThreshold");
     }
 
 }
