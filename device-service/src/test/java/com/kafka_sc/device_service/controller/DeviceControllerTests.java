@@ -83,6 +83,19 @@ class DeviceControllerTests {
     }
 
     @Test
+    void createDevice_withNoNameAndType_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/device")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"name":"","location":"Kitchen","userId":1}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.errors.name").value("name is required"))
+                .andExpect(jsonPath("$.errors.type").value("type is required"));
+    }
+
+    @Test
     void deleteDevice_returns204() throws Exception {
         mockMvc.perform(delete("/api/v1/device/5"))
                 .andExpect(status().isNoContent());

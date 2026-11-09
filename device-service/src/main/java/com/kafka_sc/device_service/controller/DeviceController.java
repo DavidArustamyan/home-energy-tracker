@@ -2,6 +2,7 @@ package com.kafka_sc.device_service.controller;
 
 import com.kafka_sc.device_service.dto.DeviceDto;
 import com.kafka_sc.device_service.service.DeviceService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,7 +27,7 @@ public class DeviceController {
     }
 
     @PostMapping
-    public ResponseEntity<DeviceDto> createDevice(@RequestBody DeviceDto deviceDto) {
+    public ResponseEntity<DeviceDto> createDevice(@Valid @RequestBody DeviceDto deviceDto) {
         DeviceDto created = deviceService.createDevice(deviceDto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -37,7 +38,7 @@ public class DeviceController {
 
     @PutMapping("/{id}")
     public ResponseEntity<DeviceDto> updateDevice(@PathVariable Long id,
-                                                  @RequestBody DeviceDto deviceDto) {
+                                                  @Valid @RequestBody DeviceDto deviceDto) {
         return ResponseEntity.ok(deviceService.updateDevice(id, deviceDto));
     }
 
