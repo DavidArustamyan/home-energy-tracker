@@ -1,6 +1,7 @@
 package com.kafka_sc.ingestion_service.controller;
 
 import com.kafka_sc.ingestion_service.dto.EnergyUsageDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.kafka_sc.ingestion_service.service.IngestionService;
@@ -16,7 +17,7 @@ public class IngestionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void ingestData(@RequestBody EnergyUsageDto usageDto) {
+    public void ingestData(@Valid @RequestBody EnergyUsageDto usageDto) {
         ingestionService.ingestEnergyUsage(usageDto);
     }
 }
