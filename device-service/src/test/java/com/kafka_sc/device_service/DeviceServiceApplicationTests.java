@@ -1,40 +1,14 @@
 package com.kafka_sc.device_service;
 
-import com.kafka_sc.device_service.entity.Device;
-import com.kafka_sc.device_service.model.DeviceType;
-import com.kafka_sc.device_service.repository.DeviceRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
+import com.kafka_sc.device_service.testsupport.MySqlTestcontainersBase;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Slf4j
 @SpringBootTest
-class DeviceServiceApplicationTests {
-
-	public static final int NUMBER_OF_DEVICES = 200;
-	public static final int USERS = 10;
-	@Autowired
-	private DeviceRepository deviceRepository;
-
+@Testcontainers(disabledWithoutDocker = true)
+class DeviceServiceApplicationTests extends MySqlTestcontainersBase {
 	@Test
 	void contextLoads() {
 	}
-
-	@Test
-	@Disabled
-	void createDevices() {
-		for (int i = 1; i <= NUMBER_OF_DEVICES; i++) {
-			var device = Device.builder()
-					.name("Device" + i)
-					.type(DeviceType.values()[i % DeviceType.values().length])
-					.location("Location" + ((i % 3) + 1))
-					.userId((long) ((i % USERS) + 1))
-					.build();
-			deviceRepository.save(device);
-		}
-		log.info("Device repository has been populated");
-	}
-
 }
