@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class InsightService {
 
     private final UsageClient usageClient;
-    private OllamaChatModel ollamaChatModel;
+    private final OllamaChatModel ollamaChatModel;
 
     public InsightService(UsageClient usageClient, OllamaChatModel ollamaChatModel) {
         this.usageClient = usageClient;
@@ -26,6 +26,13 @@ public class InsightService {
         // Fetch data from Usage Service
         final UsageDto usageData = usageClient.getXDaysUsageForUser(userId, 3);
 
+        if (usageData.devices() == null || usageData.devices().isEmpty()) {
+            return InsightDto.builder()
+                    .userId(userId)
+                    .tips("No devices found for this user")
+                    .energyUsage(0)
+                    .build();
+        }
         double totalUsage = usageData.devices().stream()
                 .mapToDouble(DeviceDto::energyConsumed)
                 .sum();
@@ -54,6 +61,14 @@ public class InsightService {
 
     public InsightDto getOverview(Long userId) {
         final UsageDto usageData = usageClient.getXDaysUsageForUser(userId, 3);
+
+        if (usageData.devices() == null || usageData.devices().isEmpty()) {
+            return InsightDto.builder()
+                    .userId(userId)
+                    .tips("No devices found for this user")
+                    .energyUsage(0)
+                    .build();
+        }
 
         double totalUsage = usageData.devices().stream().mapToDouble(DeviceDto::energyConsumed).sum();
 
