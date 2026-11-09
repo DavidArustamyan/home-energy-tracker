@@ -147,20 +147,20 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:9000/api/v1/user/1
 - Fixed a broken JWT issuer property in the gateway (`jwt,issuer-uri` → `jwt.issuer-uri`)
 - Upgraded all services to Spring Boot 4.1; `insight-service` migrated from Boot 3.5 / Spring AI 1.1 to Boot 4.1 / Spring AI 2.0
 - OpenAPI docs for `ingestion-service` and `insight-service`, aggregated in the gateway Swagger UI
-- Exception handling in `user-service` (`UserNotFoundException` + `@ControllerAdvice`)
 - Logging and execution-time aspects in `device-service`
 - RESTful device creation endpoint (`POST /api/v1/device` instead of `POST /create`)
 - Keycloak persisted to MySQL (the original config used env variables Keycloak 24 ignores) and realm exported to the repo, so a fresh clone works end to end
 - Fixed MySQL init script syntax, pinned infrastructure image versions, removed a duplicated/unused Docker volume
 - Centralized error handling: RFC 9457 problem details in all HTTP services, field-level validation errors, 409 on data conflicts, 502/503 when a dependency is unavailable
+- Fixed tutorial bugs: all gateway routes shared one fallback path, NPE in insight-service for users without devices, LLM system prompt was never applied, alert history recorded wrong results on database errors
 
 ## Roadmap
 
 **Error handling & API quality**
 - [X] `@RestControllerAdvice` with RFC 9457 `ProblemDetail` in all HTTP services
 - [X] Bean Validation on request DTOs; proper `201 Created` + `Location`, `404`, `409`
-- [ ] Fix gateway fallbacks (all routes currently share one fallback path)
-- [ ] Fix NPE in `insight-service` when a user has no devices
+- [X] Fix gateway fallbacks (all routes currently share one fallback path)
+- [X] Fix NPE in `insight-service` when a user has no devices
 
 **Testing & CI**
 - [ ] Unit tests for threshold/alerting logic

@@ -32,6 +32,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(UsageDataUnavailableException.class)
+    public ProblemDetail handleUsageDataUnavailable(UsageDataUnavailableException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        problem.setTitle("Service unavailable");
+        return problem;
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception ex) {

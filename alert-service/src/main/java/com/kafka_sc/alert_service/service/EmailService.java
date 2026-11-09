@@ -3,9 +3,12 @@ package com.kafka_sc.alert_service.service;
 import com.kafka_sc.alert_service.entity.Alert;
 import com.kafka_sc.alert_service.repository.AlertRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -28,30 +31,20 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(body);
 
+        boolean sent;
         try {
             mailSender.send(message);
-
-            final Alert alertSent = Alert.builder()
-                    .sent(true)
-                    .createdAt(java.time.LocalDateTime.now())
-                    .userId(userId)
-                    .build();
-
-            alertRepository.saveAndFlush(alertSent);
-
-        } catch (Exception e) {
+            sent = true;
+            log.info("Email sent to: {}", to);
+        } catch (MailException e) {
+            sent = false;
             log.error("Failed to send email to: {}", to, e);
-
-            final Alert alertSent = Alert.builder()
-                    .sent(false)
-                    .createdAt(java.time.LocalDateTime.now())
-                    .userId(userId)
-                    .build();
-
-            alertRepository.saveAndFlush(alertSent);
-            return;
         }
 
-        log.info("Email sent to: {}", to);
+        alertRepository.save(Alert.builder()
+                .sent(sent)
+                .createdAt(LocalDateTime.now())
+                .userId(userId)
+                .build());
     }
 }

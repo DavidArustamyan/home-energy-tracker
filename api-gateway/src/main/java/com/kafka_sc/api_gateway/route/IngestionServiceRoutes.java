@@ -26,17 +26,8 @@ public class IngestionServiceRoutes {
                 .before(uri("http://localhost:8082"))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker(
                         "ingestionServiceCircuitBreaker",
-                        URI.create("forward:/fallbackRoute")
+                        URI.create("forward:/fallback/ingestion")
                 ))
-                .build();
-    }
-
-    @Bean
-    public RouterFunction<ServerResponse> ingestionFallbackRoute() {
-        return route("fallbackRoute")
-                .route(RequestPredicates.path("/fallbackRoute"),
-                        request -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)
-                                .body("user service is down"))
                 .build();
     }
 
