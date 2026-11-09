@@ -13,6 +13,7 @@ import com.kafka_sc.usage_service.client.UserClient;
 import com.kafka_sc.usage_service.dto.DeviceDto;
 import com.kafka_sc.usage_service.dto.UsageDto;
 import com.kafka_sc.usage_service.dto.UserDto;
+import com.kafka_sc.usage_service.exception.UsageDataUnavailableException;
 import com.kafka_sc.usage_service.model.Device;
 import com.kafka_sc.usage_service.model.DeviceEnergy;
 import lombok.extern.slf4j.Slf4j;
@@ -192,7 +193,7 @@ public class UsageService {
         if (devices == null || devices.isEmpty()) {
             return UsageDto.builder()
                     .userId(userId)
-                    .devices(null)
+                    .devices(List.of())
                     .build();
         }
 
@@ -244,13 +245,8 @@ public class UsageService {
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to query InfluxDB for user {} usage over {} days: {}", userId, days, e.getMessage());
-            // set aggregatedConsumption to 0.0 on error
-            devices.forEach(d -> d.setEnergyConsumed(0.0));
-            return UsageDto.builder()
-                    .userId(userId)
-                    .devices(null)
-                    .build();
+            log.error("Failed to query InfluxDB for user {} usage over {} days", userId, days, e);
+            throw new UsageDataUnavailableException(e);
         }
 
         for (Device device : devices) {
