@@ -5,6 +5,7 @@ import com.kafka_sc.device_service.entity.Device;
 import com.kafka_sc.device_service.exception.DeviceNotFoundException;
 import com.kafka_sc.device_service.repository.DeviceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class DeviceService {
         return toDto(savedDevice);
     }
 
+    @Transactional
     public DeviceDto updateDevice(Long id, DeviceDto input) {
         Device existing = deviceRepository.findById(id)
                 .orElseThrow(()-> new DeviceNotFoundException(id));

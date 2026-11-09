@@ -7,6 +7,7 @@ import com.kafka_sc.device_service.service.DeviceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -93,6 +94,19 @@ class DeviceControllerTests {
                 .andExpect(jsonPath("$.title").value("Validation failed"))
                 .andExpect(jsonPath("$.errors.name").value("name is required"))
                 .andExpect(jsonPath("$.errors.type").value("type is required"));
+    }
+
+    @Test
+    void createDevice_throwsDataIntegrityViolation_returns409() throws Exception {
+        given(deviceService.createDevice(any())).willThrow(new DataIntegrityViolationException("fk violation"));
+
+        mockMvc.perform(post("/api/v1/device")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {"name":"Kitchen light","type":"LIGHT","location":"Kitchen","userId":1}
+                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Data conflict"));
     }
 
     @Test
