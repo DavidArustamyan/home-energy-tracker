@@ -5,6 +5,7 @@ import com.kafka_sc.device_service.entity.Device;
 import com.kafka_sc.device_service.exception.DeviceNotFoundException;
 import com.kafka_sc.device_service.repository.DeviceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class DeviceService {
 
     public DeviceDto getDeviceById(Long id) {
         Device device = deviceRepository.findById(id)
-                .orElseThrow(() -> new DeviceNotFoundException("device not found with id: " + id));
-        return mapToDto(device);
+                .orElseThrow(() -> new DeviceNotFoundException(id));
+        return toDto(device);
     }
 
     public DeviceDto createDevice(DeviceDto input) {
@@ -31,24 +32,25 @@ public class DeviceService {
         device.setUserId(input.getUserId());
 
         final Device savedDevice = deviceRepository.save(device);
-        return mapToDto(savedDevice);
+        return toDto(savedDevice);
     }
 
+    @Transactional
     public DeviceDto updateDevice(Long id, DeviceDto input) {
         Device existing = deviceRepository.findById(id)
-                .orElseThrow(()-> new DeviceNotFoundException("Device not found with id: " + id));
+                .orElseThrow(()-> new DeviceNotFoundException(id));
         existing.setName(input.getName());
         existing.setType(input.getType());
         existing.setLocation(input.getLocation());
         existing.setUserId(input.getUserId());
 
         final Device updatedDevice = deviceRepository.save(existing);
-        return mapToDto(updatedDevice);
+        return toDto(updatedDevice);
     }
 
     public void deleteDevice(Long id) {
         if (!deviceRepository.existsById(id)) {
-            throw new DeviceNotFoundException("Device not found with id: " + id);
+            throw new DeviceNotFoundException(id);
         }
         deviceRepository.deleteById(id);
     }
@@ -56,11 +58,11 @@ public class DeviceService {
     public List<DeviceDto> getAllDevicesByUserId(Long userId) {
         List<Device> devices = deviceRepository.findAllByUserId(userId);
         return devices.stream()
-                .map(this::mapToDto)
+                .map(this::toDto)
                 .toList();
     }
 
-    private DeviceDto mapToDto(Device device) {
+    private DeviceDto toDto(Device device) {
         DeviceDto dto = new DeviceDto();
         dto.setId(device.getId());
         dto.setName(device.getName());

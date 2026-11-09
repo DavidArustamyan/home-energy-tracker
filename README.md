@@ -152,12 +152,13 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:9000/api/v1/user/1
 - RESTful device creation endpoint (`POST /api/v1/device` instead of `POST /create`)
 - Keycloak persisted to MySQL (the original config used env variables Keycloak 24 ignores) and realm exported to the repo, so a fresh clone works end to end
 - Fixed MySQL init script syntax, pinned infrastructure image versions, removed a duplicated/unused Docker volume
+- Centralized error handling: RFC 9457 problem details in all HTTP services, field-level validation errors, 409 on data conflicts, 502/503 when a dependency is unavailable
 
 ## Roadmap
 
 **Error handling & API quality**
-- [ ] `@RestControllerAdvice` with RFC 9457 `ProblemDetail` in all HTTP services
-- [ ] Bean Validation on request DTOs; proper `201 Created` + `Location`, `404`, `409`
+- [X] `@RestControllerAdvice` with RFC 9457 `ProblemDetail` in all HTTP services
+- [X] Bean Validation on request DTOs; proper `201 Created` + `Location`, `404`, `409`
 - [ ] Fix gateway fallbacks (all routes currently share one fallback path)
 - [ ] Fix NPE in `insight-service` when a user has no devices
 

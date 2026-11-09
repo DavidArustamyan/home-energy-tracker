@@ -10,12 +10,11 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,6 +47,9 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
+        assertThat(response.getHeaders().getLocation()).isNotNull();
+        assertThat(response.getHeaders().getLocation().getPath())
+                .isEqualTo("/api/v1/user/" + response.getBody().getId());
         assertThat(response.getBody().getId()).isNotNull();
         assertThat(response.getBody().getName()).isEqualTo("Mister");
         assertThat(response.getBody().getSurname()).isEqualTo("Boss");
@@ -115,14 +117,16 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
                 .energyAlertingThreshold(750.0)
                 .build();
 
-        ResponseEntity<String> updateResponse = restTemplate.exchange(
+        ResponseEntity<UserDto> updateResponse = restTemplate.exchange(
                 "/api/v1/user/" + id,
                 HttpMethod.PUT,
                 new HttpEntity<>(updateRequest),
-                String.class);
+                UserDto.class);
 
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(updateResponse.getBody()).isEqualTo("User updated successfully");
+        assertThat(updateResponse.getBody()).isNotNull();
+        assertThat(updateResponse.getBody().getName()).isEqualTo("Alan Mathison");
+        assertThat(updateResponse.getBody().getAddress()).isEqualTo("12 Wilmslow Rd");
 
         ResponseEntity<UserDto> loaded =
                 restTemplate.getForEntity("/api/v1/user/" + id, UserDto.class);
@@ -132,6 +136,22 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
         assertThat(loaded.getBody().getAddress()).isEqualTo("12 Wilmslow Rd");
         assertThat(loaded.getBody().isAlerting()).isFalse();
         assertThat(loaded.getBody().getEnergyAlertingThreshold()).isEqualTo(750.0);
+    }
+
+    @Test
+    void updateUser_withEmailOfAnotherUser_returns409() {
+        UserDto first = UserDto.builder().name("Grace").email("grace@example.com").build();
+        UserDto second = UserDto.builder().name("Mike").email("mike@example.com").build();
+
+        restTemplate.postForEntity("/api/v1/user", first, UserDto.class);
+        Long secondId = restTemplate.postForEntity("/api/v1/user", second, UserDto.class).getBody().getId();
+
+        UserDto update = UserDto.builder().name("Mike").email("grace@example.com").build();
+        ResponseEntity<ProblemDetail> response = restTemplate.exchange(
+                "/api/v1/user/" + secondId, HttpMethod.PUT, new HttpEntity<>(update), ProblemDetail.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getTitle()).isEqualTo("Email already in use");
     }
 
     @Test
@@ -159,9 +179,52 @@ public class UserServiceIntegrationTest extends MySqlTestcontainersBase {
 
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        ResponseEntity<UserDto> afterDelete =
-                restTemplate.getForEntity("/api/v1/user/" + id, UserDto.class);
+        ResponseEntity<ProblemDetail> afterDelete =
+                restTemplate.getForEntity("/api/v1/user/" + id, ProblemDetail.class);
         assertThat(afterDelete.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(afterDelete.getBody()).isNotNull();
+        assertThat(afterDelete.getBody().getTitle()).isEqualTo("User not found");
+        assertThat(afterDelete.getBody().getDetail()).isEqualTo("User with id " + id + " not found");
+    }
+
+    @Test
+    void createUser_withInvalidData_returns400withFieldErrors() {
+        UserDto createRequest = UserDto.builder()
+                .name("")
+                .email("not-an-email")
+                .energyAlertingThreshold(-5)
+                .build();
+
+        ResponseEntity<ProblemDetail> response = restTemplate.postForEntity("/api/v1/user", createRequest, ProblemDetail.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getTitle()).isEqualTo("Validation failed");
+        assertThat(response.getBody().getProperties()).containsKey("errors");
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> errors = (Map<String, String>) response.getBody().getProperties().get("errors");
+        assertThat(errors).containsOnlyKeys("name", "email", "energyAlertingThreshold");
+    }
+
+    @Test
+    void createUser_withDuplicatedEmail_returns409() {
+        UserDto request = UserDto.builder()
+                .name("Ada")
+                .surname("Lovelace")
+                .email("ada.duplicate@example.com")
+                .energyAlertingThreshold(100.0)
+                .build();
+
+        ResponseEntity<UserDto> first =
+                restTemplate.postForEntity("/api/v1/user", request, UserDto.class);
+        assertThat(first.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        ResponseEntity<ProblemDetail> second =
+                restTemplate.postForEntity("/api/v1/user", request, ProblemDetail.class);
+        assertThat(second.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(second.getBody()).isNotNull();
+        assertThat(second.getBody().getTitle()).isEqualTo("Email already in use");
     }
 
 }
