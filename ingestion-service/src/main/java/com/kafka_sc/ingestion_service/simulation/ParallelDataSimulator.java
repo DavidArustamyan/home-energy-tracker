@@ -5,6 +5,7 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "simulation.enabled", havingValue = "true")
 public class ParallelDataSimulator implements CommandLineRunner {
 
     private final RestTemplate restTemplate = new RestTemplate();

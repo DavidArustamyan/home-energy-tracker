@@ -1,0 +1,14 @@
+package com.kafka_sc.alert_service.testsupport;
+
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.mysql.MySQLContainer;
+
+public abstract class MySqlTestcontainersBase {
+    @ServiceConnection
+    @Container
+    static MySQLContainer mysql = new MySQLContainer("mysql:26.7.0")
+            .withDatabaseName("home_energy_tracker")
+            .withUsername("root")
+            .withPassword("password");
+}

@@ -1,5 +1,6 @@
 # Home Energy Tracker
 
+[![CI](https://github.com/DavidArustamyan/home-energy-tracker/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/DavidArustamyan/home-energy-tracker/actions/workflows/ci.yml)
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-green)
 ![Kafka](https://img.shields.io/badge/Apache%20Kafka-4.3-black)
