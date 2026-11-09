@@ -26,20 +26,10 @@ public class InsightServiceRoutes {
                 .before(uri("http://localhost:8085"))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker(
                         "insightServiceCircuitBreaker",
-                        URI.create("forward:/fallbackRoute")
+                        URI.create("forward:/fallback/insight")
                 ))
                 .build();
     }
-
-    @Bean
-    public RouterFunction<ServerResponse> insightFallbackRoute() {
-        return route("fallbackRoute")
-                .route(RequestPredicates.path("/fallbackRoute"),
-                        request -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)
-                                .body("insight service is down"))
-                .build();
-    }
-
 
     @Bean
     public RouterFunction<ServerResponse> insightServiceApiDocs() {
