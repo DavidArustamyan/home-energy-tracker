@@ -31,7 +31,7 @@ public class ThresholdEvaluator {
                 .toList();
     }
 
-    public Optional<AlertingEvent> alertIfExceeded(Long userId, double consumption, UserDto user) {
+    private Optional<AlertingEvent> alertIfExceeded(Long userId, double consumption, UserDto user) {
         if (user == null || !user.alerting() || consumption <= user.energyAlertingThreshold()) {
             return Optional.empty();
         }
