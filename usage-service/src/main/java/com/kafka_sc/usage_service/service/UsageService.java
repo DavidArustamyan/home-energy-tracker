@@ -1,6 +1,5 @@
 package com.kafka_sc.usage_service.service;
 
-import com.influxdb.client.InfluxDBClient;
 import com.kafka_sc.kafka.event.AlertingEvent;
 import com.kafka_sc.kafka.event.EnergyUsageEvent;
 import com.kafka_sc.usage_service.client.DeviceClient;
