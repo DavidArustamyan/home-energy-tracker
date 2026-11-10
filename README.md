@@ -154,6 +154,8 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:9000/api/v1/user/1
 - Fixed MySQL init script syntax, pinned infrastructure image versions, removed a duplicated/unused Docker volume
 - Centralized error handling: RFC 9457 problem details in all HTTP services, field-level validation errors, 409 on data conflicts, 502/503 when a dependency is unavailable
 - Fixed tutorial bugs: all gateway routes shared one fallback path, NPE in insight-service for users without devices, LLM system prompt was never applied, alert history recorded wrong results on database errors
+- CI on GitHub Actions; all tests run without local infrastructure (Testcontainers), demo data seeded via a `dev`-profile Flyway script
+- Usage aggregation split into clear steps; threshold decision extracted into a pure, unit-tested component
 
 ## Roadmap
 
@@ -164,7 +166,7 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:9000/api/v1/user/1
 - [X] Fix NPE in `insight-service` when a user has no devices
 
 **Testing & CI**
-- [ ] Unit tests for threshold/alerting logic
+- [X] Unit tests for threshold/alerting logic
 - [ ] `@WebMvcTest` slices for controllers and error handling
 - [ ] Testcontainers integration tests for Kafka and InfluxDB, WireMock for service clients
 - [ ] GitHub Actions pipeline with test coverage report (JaCoCo)
